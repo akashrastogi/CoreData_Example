@@ -7,7 +7,7 @@
 //
 
 #import "AppDelegate.h"
-
+#import "Person.h"
 @interface AppDelegate ()
 
 @end
@@ -17,6 +17,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    [self basicCrudOperations];
     return YES;
 }
 
@@ -55,7 +56,7 @@
  */
 - (NSPersistentStoreCoordinator *)persistentStoreCoordinator
 {
-    if (!_persistentStoreCoordinator)
+    if (_persistentStoreCoordinator)
     {
         return _persistentStoreCoordinator;
     }
@@ -80,7 +81,7 @@
  */
 - (NSManagedObjectContext *)managedObjectContext
 {
-    if (!_managedObjectContext)
+    if (_managedObjectContext)
     {
         return _managedObjectContext;
     }
@@ -103,6 +104,65 @@
             abort();
         }
     }
+}
+
+#pragma mark - Basic CRUD operations
+- (void)basicCrudOperations
+{
+    // Create Person object
+    Person *person = [NSEntityDescription insertNewObjectForEntityForName:@"Person" inManagedObjectContext:[self managedObjectContext]];
+    int r = arc4random() % 100;
+    person.first = [NSString stringWithFormat:@"first_%d", r];
+    person.last = [NSString stringWithFormat:@"last_%d", r];
+    person.age = r;
+    person.createdAt = [[NSDate date]timeIntervalSince1970];
+    NSError *error;
+    if (![[self managedObjectContext] save:&error])
+    {
+        NSAssert(NO, @"Error saving context: %@\n%@", [error localizedDescription], [error userInfo]);
+    }
+    
+    // Read Persons
+    error = nil;
+    NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"Person"];
+    NSArray *arrPersons = [[self managedObjectContext]executeFetchRequest:fetchRequest error:&error];
+    if (error)
+    {
+        NSAssert(NO, @"Error fetching context: %@\n%@", [error localizedDescription], [error userInfo]);
+    }
+    else
+    {
+        NSLog(@"Available persons As Fault- %@", arrPersons);
+        NSLog(@"All first names- %@", [arrPersons valueForKey:@"first"]);
+        NSLog(@"Persons after faulting- %@", arrPersons);
+    }
+    
+    // Update Record
+    error = nil;
+    NSFetchRequest *updateRequest = [NSFetchRequest fetchRequestWithEntityName:@"Person"];
+    int age = 70;// may be different based on available data
+    [updateRequest setPredicate:[NSPredicate predicateWithFormat:@"age == %d", age]];
+    Person *oldPerson = [[[self managedObjectContext]executeFetchRequest:updateRequest error:&error]lastObject];
+    if (oldPerson)
+    {
+        oldPerson.first = [NSString stringWithFormat:@"updated first name- %d", r];
+        oldPerson.last = [NSString stringWithFormat:@"updated last name- %d", r];
+        error = nil;
+        [[self managedObjectContext]save:&error];
+    }
+    
+    // Delete Records
+    error = nil;
+    NSFetchRequest *deleteRequest = [NSFetchRequest fetchRequestWithEntityName:@"Person"];
+    age = 90;// may be different based on available data
+    [deleteRequest setPredicate:[NSPredicate predicateWithFormat:@"age == %d", age]];
+    NSArray *arrDeletePersons = [[self managedObjectContext]executeFetchRequest:deleteRequest error:&error];
+    for (int i=0; i<arrDeletePersons.count; i++)
+    {
+        Person *deletePerson = [arrPersons objectAtIndex:i];
+        [[self managedObjectContext]deleteObject:deletePerson];
+    }
+    [[self managedObjectContext]save:&error];
 }
 
 @end

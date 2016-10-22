@@ -14,6 +14,7 @@
 		D2AC1B931DBBD058003132CA /* CoreData_Example.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D2AC1B911DBBD058003132CA /* CoreData_Example.xcdatamodeld */; };
 		D2AC1B951DBBD058003132CA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D2AC1B941DBBD058003132CA /* Assets.xcassets */; };
 		D2AC1B981DBBD058003132CA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D2AC1B961DBBD058003132CA /* LaunchScreen.storyboard */; };
+		D2AC1BB01DBBDEB2003132CA /* Person.m in Sources */ = {isa = PBXBuildFile; fileRef = D2AC1BAE1DBBDEB2003132CA /* Person.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,8 @@
 		D2AC1B941DBBD058003132CA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D2AC1B971DBBD058003132CA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D2AC1B991DBBD058003132CA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D2AC1BAD1DBBDEB2003132CA /* Person.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Person.h; sourceTree = "<group>"; };
+		D2AC1BAE1DBBDEB2003132CA /* Person.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Person.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44,6 +47,8 @@
 		D2AC1B791DBBD058003132CA = {
 			isa = PBXGroup;
 			children = (
+				D2AC1BAD1DBBDEB2003132CA /* Person.h */,
+				D2AC1BAE1DBBDEB2003132CA /* Person.m */,
 				D2AC1B841DBBD058003132CA /* CoreData_Example */,
 				D2AC1B831DBBD058003132CA /* Products */,
 			);
@@ -152,6 +157,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D2AC1BB01DBBDEB2003132CA /* Person.m in Sources */,
 				D2AC1B8D1DBBD058003132CA /* ViewController.m in Sources */,
 				D2AC1B8A1DBBD058003132CA /* AppDelegate.m in Sources */,
 				D2AC1B871DBBD058003132CA /* main.m in Sources */,
