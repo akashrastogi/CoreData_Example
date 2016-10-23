@@ -7,7 +7,7 @@
 //
 
 #import "AppDelegate.h"
-#import "Person.h"
+#import "Employee.h"
 @interface AppDelegate ()
 
 @end
@@ -109,58 +109,58 @@
 #pragma mark - Basic CRUD operations
 - (void)basicCrudOperations
 {
-    // Create Person object
-    Person *person = [NSEntityDescription insertNewObjectForEntityForName:@"Person" inManagedObjectContext:[self managedObjectContext]];
+    // Create employee object
+    Employee *employee = [NSEntityDescription insertNewObjectForEntityForName:@"Employee" inManagedObjectContext:[self managedObjectContext]];
     int r = arc4random() % 100;
-    person.first = [NSString stringWithFormat:@"first_%d", r];
-    person.last = [NSString stringWithFormat:@"last_%d", r];
-    person.age = r;
-    person.createdAt = [[NSDate date]timeIntervalSince1970];
+    employee.first = [NSString stringWithFormat:@"first_%d", r];
+    employee.last = [NSString stringWithFormat:@"last_%d", r];
+    employee.age = r;
+    employee.createdAt = [[NSDate date]timeIntervalSince1970];
     NSError *error;
     if (![[self managedObjectContext] save:&error])
     {
         NSAssert(NO, @"Error saving context: %@\n%@", [error localizedDescription], [error userInfo]);
     }
     
-    // Read Persons
+    // Read employees
     error = nil;
-    NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"Person"];
-    NSArray *arrPersons = [[self managedObjectContext]executeFetchRequest:fetchRequest error:&error];
+    NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"Employee"];
+    NSArray *arrEmployees = [[self managedObjectContext]executeFetchRequest:fetchRequest error:&error];
     if (error)
     {
         NSAssert(NO, @"Error fetching context: %@\n%@", [error localizedDescription], [error userInfo]);
     }
     else
     {
-        NSLog(@"Available persons As Fault- %@", arrPersons);
-        NSLog(@"All first names- %@", [arrPersons valueForKey:@"first"]);
-        NSLog(@"Persons after faulting- %@", arrPersons);
+        NSLog(@"Available employees As Fault- %@", arrEmployees);
+        NSLog(@"All first names- %@", [arrEmployees valueForKey:@"first"]);
+        NSLog(@"employees after faulting- %@", arrEmployees);
     }
     
     // Update Record
     error = nil;
-    NSFetchRequest *updateRequest = [NSFetchRequest fetchRequestWithEntityName:@"Person"];
+    NSFetchRequest *updateRequest = [NSFetchRequest fetchRequestWithEntityName:@"Employee"];
     int age = 70;// may be different based on available data
     [updateRequest setPredicate:[NSPredicate predicateWithFormat:@"age == %d", age]];
-    Person *oldPerson = [[[self managedObjectContext]executeFetchRequest:updateRequest error:&error]lastObject];
-    if (oldPerson)
+    Employee *oldEmployee = [[[self managedObjectContext]executeFetchRequest:updateRequest error:&error]lastObject];
+    if (oldEmployee)
     {
-        oldPerson.first = [NSString stringWithFormat:@"updated first name- %d", r];
-        oldPerson.last = [NSString stringWithFormat:@"updated last name- %d", r];
+        oldEmployee.first = [NSString stringWithFormat:@"updated first name- %d", r];
+        oldEmployee.last = [NSString stringWithFormat:@"updated last name- %d", r];
         error = nil;
         [[self managedObjectContext]save:&error];
     }
     
     // Delete Records
     error = nil;
-    NSFetchRequest *deleteRequest = [NSFetchRequest fetchRequestWithEntityName:@"Person"];
+    NSFetchRequest *deleteRequest = [NSFetchRequest fetchRequestWithEntityName:@"Employee"];
     age = 90;// may be different based on available data
     [deleteRequest setPredicate:[NSPredicate predicateWithFormat:@"age == %d", age]];
-    NSArray *arrDeletePersons = [[self managedObjectContext]executeFetchRequest:deleteRequest error:&error];
-    for (int i=0; i<arrDeletePersons.count; i++)
+    NSArray *arrDeleteEmployees = [[self managedObjectContext]executeFetchRequest:deleteRequest error:&error];
+    for (int i=0; i<arrDeleteEmployees.count; i++)
     {
-        Person *deletePerson = [arrPersons objectAtIndex:i];
-        [[self managedObjectContext]deleteObject:deletePerson];
+        Employee *deleteEmployee = [arrDeleteEmployees objectAtIndex:i];
+        [[self managedObjectContext]deleteObject:deleteEmployee];
     }
     [[self managedObjectContext]save:&error];
 }

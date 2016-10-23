@@ -1,8 +1,8 @@
 //
-//  Person.h
+//  Employee.h
 //  CoreData_Example
 //
-//  Created by HealthOne on 22/10/16.
+//  Created by HealthOne on 23/10/16.
 //  Copyright © 2016 akash. All rights reserved.
 //
 
@@ -10,12 +10,12 @@
 #import <CoreData/CoreData.h>
 
 
-@interface Person : NSManagedObject
+@interface Employee : NSManagedObject
 
-@property (nullable, nonatomic, retain) NSString *first;
-@property (nullable, nonatomic, retain) NSString *last;
 @property (nonatomic) int16_t age;
 @property (nonatomic) NSTimeInterval createdAt;
+@property (nullable, nonatomic, retain) NSString *first;
+@property (nullable, nonatomic, retain) NSString *last;
 
 @end
 
