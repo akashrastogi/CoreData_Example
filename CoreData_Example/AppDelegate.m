@@ -8,6 +8,9 @@
 
 #import "AppDelegate.h"
 #import "Employee.h"
+#import "Person.h"
+#import "Address.h"
+
 @interface AppDelegate ()
 
 @end
@@ -18,6 +21,9 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     [self basicCrudOperations];
+    
+    [self relationshipCrudOperations];
+    
     return YES;
 }
 
@@ -63,9 +69,9 @@
     NSURL *storeUrl = [[self  applicationDocumentsDirectory]URLByAppendingPathComponent:@"CoreData_Example.sqlite"];
     _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc]initWithManagedObjectModel:[self managedObjectModel]];
     NSDictionary *dictOptions = @{
-                              NSMigratePersistentStoresAutomaticallyOption : @(YES),
-                              NSInferMappingModelAutomaticallyOption : @(YES)
-                              };
+                                  NSMigratePersistentStoresAutomaticallyOption : @(YES),
+                                  NSInferMappingModelAutomaticallyOption : @(YES)
+                                  };
     NSError *error;
     NSPersistentStore *store = [_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeUrl options:dictOptions error:&error];
     if (!store)
@@ -163,6 +169,108 @@
         [[self managedObjectContext]deleteObject:deleteEmployee];
     }
     [[self managedObjectContext]save:&error];
+}
+
+#pragma mark - Relationships
+- (void)relationshipCrudOperations
+{
+    int random = arc4random() % 100;
+    
+    // Create person
+    Person *person = [NSEntityDescription insertNewObjectForEntityForName:@"Person" inManagedObjectContext:[self managedObjectContext]];
+    person.age = random;
+    person.first = [NSString stringWithFormat:@"first_%d", random];
+    person.last = [NSString stringWithFormat:@"last_%d", random];
+    
+    // Create Address
+    Address *address = [NSEntityDescription insertNewObjectForEntityForName:@"Address" inManagedObjectContext:[self managedObjectContext]];
+    address.city = [NSString stringWithFormat:@"city_%d", random];
+    address.country = [NSString stringWithFormat:@"country_%d", random];
+    address.number = [NSString stringWithFormat:@"number_%d", random];
+    address.street = [NSString stringWithFormat:@"street_%d", random];
+    
+    int random2 = arc4random() % 100;
+    Address *address2 = [NSEntityDescription insertNewObjectForEntityForName:@"Address" inManagedObjectContext:[self managedObjectContext]];
+    address2.city = [NSString stringWithFormat:@"city_%d", random2];
+    address2.country = [NSString stringWithFormat:@"country_%d", random2];
+    address2.number = [NSString stringWithFormat:@"number_%d", random2];
+    address2.street = [NSString stringWithFormat:@"street_%d", random2];
+    
+    NSSet *setAddress = [NSSet setWithObjects:address, address2, nil];
+    
+    //     Assign Address set to person
+    person.addresses = setAddress;
+    
+    // Save Person
+    NSError *error;
+    if (![[self managedObjectContext] save:&error])
+    {
+        NSAssert(NO, @"Error saving context: %@\n%@", [error localizedDescription], [error userInfo]);
+    }
+    
+    
+    // Read Persons
+    error = nil;
+    NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"Person"];
+    NSArray *arrpersons = [[self managedObjectContext]executeFetchRequest:fetchRequest error:&error];
+    if (error)
+    {
+        NSAssert(NO, @"Error fetching context: %@\n%@", [error localizedDescription], [error userInfo]);
+    }
+    else
+    {
+        NSLog(@"Available Persons As Fault- %@", arrpersons);
+        NSLog(@"All first names- %@", [arrpersons valueForKey:@"first"]);
+        NSLog(@"Persons after faulting- %@", arrpersons);
+    }
+    
+    
+    // Update Relationship
+    error = nil;
+    NSFetchRequest *updateRequest = [NSFetchRequest fetchRequestWithEntityName:@"Person"];
+    int age = 24;// may be different based on available data
+    [updateRequest setPredicate:[NSPredicate predicateWithFormat:@"age == %d", age]];
+    Person *oldPerson = [[[self managedObjectContext]executeFetchRequest:updateRequest error:&error]lastObject];
+    if (oldPerson)
+    {
+        NSMutableSet *setAddress = [oldPerson mutableSetValueForKey:@"addresses"];
+        [setAddress removeAllObjects];// Remove all addresses
+        
+        int random3 = arc4random() % 100;
+        Address *address3 = [NSEntityDescription insertNewObjectForEntityForName:@"Address" inManagedObjectContext:[self managedObjectContext]];
+        address3.city = [NSString stringWithFormat:@"updated_city_%d", random3];
+        address3.country = [NSString stringWithFormat:@"updated_country_%d", random3];
+        address3.number = [NSString stringWithFormat:@"updated_number_%d", random3];
+        address3.street = [NSString stringWithFormat:@"updated_street_%d", random3];
+        [setAddress addObject:address3];// add new address
+        error = nil;
+        [[self managedObjectContext]save:&error];
+    }
+    
+    // Delete relationships
+    error = nil;
+    NSFetchRequest *delRequest = [NSFetchRequest fetchRequestWithEntityName:@"Person"];
+    age = 99;// may be different based on available data
+    [delRequest setPredicate:[NSPredicate predicateWithFormat:@"age == %d", age]];
+    Person *delPerson = [[[self managedObjectContext]executeFetchRequest:delRequest error:&error]lastObject];
+    if (delPerson)
+    {
+        delPerson.addresses = nil;
+        [[self managedObjectContext]save:&error];
+    }
+    
+    
+    // Delete Person, In this example we are using 'cascade' delete rules so when we delete person object it will also delete addresses those are only associated with this Person object
+    error = nil;
+    NSFetchRequest *deleteRequest = [NSFetchRequest fetchRequestWithEntityName:@"Person"];
+    age = 39;// may be different based on available data
+    [deleteRequest setPredicate:[NSPredicate predicateWithFormat:@"age == %d", age]];
+    Person *deletePerson = [[[self managedObjectContext]executeFetchRequest:deleteRequest error:&error]lastObject];
+    if (deletePerson)
+    {
+        [[self managedObjectContext]deleteObject:deletePerson];
+        [[self managedObjectContext]save:&error];
+    }
 }
 
 @end

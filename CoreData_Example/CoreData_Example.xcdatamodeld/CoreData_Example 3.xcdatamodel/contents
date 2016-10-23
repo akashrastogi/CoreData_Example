@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="10174" systemVersion="15G31" minimumToolsVersion="Automatic">
+    <entity name="Address" representedClassName="Address" syncable="YES">
+        <attribute name="city" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="country" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="number" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="street" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="persons" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Person" inverseName="addresses" inverseEntity="Person" syncable="YES"/>
+    </entity>
+    <entity name="Employee" representedClassName="Employee" syncable="YES">
+        <attribute name="age" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="createdAt" attributeType="Date" syncable="YES"/>
+        <attribute name="first" attributeType="String" syncable="YES"/>
+        <attribute name="last" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="Person" representedClassName="Person" syncable="YES">
+        <attribute name="age" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="first" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="last" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="addresses" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Address" inverseName="persons" inverseEntity="Address" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="Employee" positionX="-63" positionY="-18" width="128" height="105"/>
+        <element name="Person" positionX="-63" positionY="153" width="128" height="103"/>
+        <element name="Address" positionX="171" positionY="152" width="128" height="118"/>
+    </elements>
+</model>
